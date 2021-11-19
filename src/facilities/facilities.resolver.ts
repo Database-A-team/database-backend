@@ -35,12 +35,12 @@ export class FacilitiesResolver {
         return this.facilitiesService.searchByName(name);
     }
 
-    @Query(() => Facility)
+    @Mutation(() => Facility)
     updateFacility(@Args('updateFacilityInput') updateFacilityInput: UpdateFacilityInput) {
         return this.facilitiesService.update(updateFacilityInput.id, updateFacilityInput);
     }
 
-    @Query(() => Boolean)
+    @Mutation(() => Boolean)
     deleteFacility(@Args('id') id: number) {
         return this.facilitiesService.delete(id);
     }

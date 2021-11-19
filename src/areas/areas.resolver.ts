@@ -40,7 +40,7 @@ export class AreasResolver {
         return this.areasService.update(updateAreaInput.id, updateAreaInput);
     }
 
-    @Query(() => Boolean)
+    @Mutation(() => Boolean)
     deleteArea(@Args('id') id: number) {
         return this.areasService.delete(id);
     }
