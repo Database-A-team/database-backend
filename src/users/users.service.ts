@@ -7,6 +7,7 @@ import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UserService {
@@ -15,6 +16,7 @@ export class UserService {
     @InjectRepository(Verification)
     private readonly verifications: Repository<Verification>,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async createAccount({
@@ -30,11 +32,12 @@ export class UserService {
       const user = await this.users.save(
         this.users.create({ email, password, role }),
       );
-      await this.verifications.save(
+      const verification = await this.verifications.save(
         this.verifications.create({
           user,
         }),
       );
+      this.mailService.sendVerificationEmail(user.email, verification.code);
       return { ok: true };
     } catch (e) {
       return { ok: false, error: "Couldn't create account" };
@@ -86,7 +89,11 @@ export class UserService {
     if (email) {
       user.email = email;
       user.verified = false;
-      await this.verifications.save(this.verifications.create({ user }));
+      await this.verifications.delete({ user: { id: user.id } });
+      const verification = await this.verifications.save(
+        this.verifications.create({ user }),
+      );
+      this.mailService.sendVerificationEmail(user.email, verification.code);
     }
     if (password) {
       user.password = password;
@@ -102,8 +109,8 @@ export class UserService {
     try {
       if (verification) {
         verification.user.verified = true;
-        console.log(verification.user);
-        this.users.save(verification.user);
+        await this.users.save(verification.user);
+        await this.verifications.delete(verification.id);
         return true;
       }
       return false;
