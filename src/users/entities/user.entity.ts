@@ -5,10 +5,18 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
-import { IsBoolean, IsEmail, IsEnum } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
+import { Movie } from 'src/movies/entities/movie.entity';
 
 export enum UserRole {
   Client = 'Client',
@@ -18,7 +26,7 @@ export enum UserRole {
 
 registerEnumType(UserRole, { name: 'UserRole' });
 
-@InputType({ isAbstract: true })
+@InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class User extends CoreEntity {
@@ -29,6 +37,7 @@ export class User extends CoreEntity {
 
   @Column({ select: false })
   @Field((type) => String)
+  @IsString()
   password: string;
 
   @Column({ type: 'enum', enum: UserRole })
@@ -40,6 +49,17 @@ export class User extends CoreEntity {
   @Field((type) => Boolean)
   @IsBoolean()
   verified: boolean;
+
+  @Field((type) => [Movie])
+  @ManyToMany((type) => Movie, (movie) => movie.favUser, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  favMovies: Movie[];
+
+  @Field((type) => [Movie])
+  @OneToMany((type) => Movie, (movie) => movie.admin)
+  enrollMovies: Movie[];
 
   @BeforeInsert()
   @BeforeUpdate()
