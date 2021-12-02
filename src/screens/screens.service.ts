@@ -47,6 +47,7 @@ export class ScreensService {
         if(createSpecialScreenInput.screenIds) {
             for(const screenId of createSpecialScreenInput.screenIds) {
                 const screen = await this.screenRepository.findOne({id: screenId});
+                if(!screen) throw new NotFoundException(`Screen id : ${screenId} is not found`);
 
                 specialScreen.screens.push(screen);
             }
@@ -122,10 +123,11 @@ export class ScreensService {
         if(!specialScreen) throw new NotFoundException(`SpecialScreen id : ${id} is not found`);
 
         Object.assign(specialScreen, updateSpecialScreenInput);
-        specialScreen.screens = []
+        specialScreen.screens = [];
         if(updateSpecialScreenInput.screenIds) {
             for(const screenId of updateSpecialScreenInput.screenIds) {
                 const screen = await this.screenRepository.findOne({id: screenId});
+                if(!screen) throw new NotFoundException(`Screen id ${screenId} is not found`);
 
                 specialScreen.screens.push(screen);
             }
