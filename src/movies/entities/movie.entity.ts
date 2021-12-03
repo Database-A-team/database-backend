@@ -2,7 +2,7 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, RelationId } from 'typeorm';
 import { Genre } from './genre.entity';
 
 @InputType('MovieInputType', { isAbstract: true })
@@ -66,4 +66,7 @@ export class Movie extends CoreEntity {
   @Field((type) => String)
   @Column()
   duration: string;
+
+  @RelationId((movie: Movie) => movie.admin)
+  adminId: number;
 }
