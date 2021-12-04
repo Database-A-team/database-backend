@@ -4,14 +4,27 @@ import { User } from 'src/users/entities/user.entity';
 import { Raw, Repository } from 'typeorm';
 import { AllGenresOutput } from './dtos/all-genres.dto';
 import { CreateMovieInput, CreateMovieOutput } from './dtos/create-movie.dto';
+import {
+  CreateReleasedMovieInput,
+  CreateReleasedMovieOutput,
+} from './dtos/create-released-movie.dto';
 import { DeleteMovieInput, DeleteMovieOutput } from './dtos/delete-movie.dto';
+import {
+  DeleteReleasedMovieInput,
+  DeleteReleasedMovieOutput,
+} from './dtos/delete-released-movie.dto';
 import { EditMovieInput, EditMovieOutput } from './dtos/edit-movie.dto';
+import {
+  EditReleasedMovieInput,
+  EditReleasedMovieOutput,
+} from './dtos/edit-released-movie.dto';
 import { GenreInput, GenreOutput } from './dtos/genre.dto';
 import { MovieInput, MovieOutput } from './dtos/movie.dto';
 import { MoviesInput, MoviesOutput } from './dtos/movies.dto';
 import { SearchMovieInput, SearchMovieOutput } from './dtos/search-movie.dto';
 import { Genre } from './entities/genre.entity';
 import { Movie } from './entities/movie.entity';
+import { ReleasedMovie } from './entities/released-movie.entity';
 import { GenreRepository } from './repositories/genre.repository';
 
 @Injectable()
@@ -20,6 +33,8 @@ export class MovieService {
     @InjectRepository(Movie)
     private readonly movies: Repository<Movie>,
     private readonly genres: GenreRepository,
+    @InjectRepository(ReleasedMovie)
+    private readonly releasedmovies: Repository<ReleasedMovie>,
   ) {}
 
   async createMovie(
@@ -49,7 +64,7 @@ export class MovieService {
   ): Promise<EditMovieOutput> {
     try {
       const movie = await this.movies.findOneOrFail(editMovieInput.movieId, {
-        loadRelationIds: true,
+        relations: ['genre'],
       });
       if (!movie) {
         return {
@@ -79,10 +94,10 @@ export class MovieService {
       return {
         ok: true,
       };
-    } catch {
+    } catch (error) {
       return {
         ok: false,
-        error: 'Could not edit movie.',
+        error: error,
       };
     }
   }
@@ -187,9 +202,11 @@ export class MovieService {
     }
   }
 
-  async findMovieById(movieInput: MovieInput): Promise<MovieOutput> {
+  async findMovieById({ movieID }: MovieInput): Promise<MovieOutput> {
     try {
-      const movie = await this.movies.findOne();
+      const movie = await this.movies.findOne(movieID, {
+        relations: ['released'],
+      });
       if (!movie) {
         return {
           ok: false,
@@ -228,6 +245,89 @@ export class MovieService {
       return {
         ok: false,
         error: 'Could not search Movie',
+      };
+    }
+  }
+
+  async createReleasedMovie(
+    createReleasedMovieInput: CreateReleasedMovieInput,
+  ): Promise<CreateReleasedMovieOutput> {
+    try {
+      const movie = await this.movies.findOne(createReleasedMovieInput.movieId);
+      if (!movie) {
+        return {
+          ok: false,
+          error: 'Movie Not Found',
+        };
+      }
+      const releasedMovie = await this.releasedmovies.save(
+        this.releasedmovies.create({ ...createReleasedMovieInput, movie }),
+      );
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not released movie.',
+      };
+    }
+  }
+
+  async editReleasedMovie(
+    editReleasedMovieInput: EditReleasedMovieInput,
+  ): Promise<EditReleasedMovieOutput> {
+    try {
+      const releasedMovie = await this.releasedmovies.findOne(
+        editReleasedMovieInput.releasedMovieId,
+        {
+          relations: ['movie'],
+        },
+      );
+      if (!releasedMovie) {
+        return {
+          ok: false,
+          error: 'Movie not Found',
+        };
+      }
+      await this.releasedmovies.save([
+        {
+          id: editReleasedMovieInput.releasedMovieId,
+          ...editReleasedMovieInput,
+        },
+      ]);
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not edit released movie',
+      };
+    }
+  }
+
+  async deleteReleasedMovie({
+    releasedMovieId,
+  }: DeleteReleasedMovieInput): Promise<DeleteReleasedMovieOutput> {
+    try {
+      const releasedMovie = await this.releasedmovies.findOne(releasedMovieId, {
+        relations: ['movie'],
+      });
+      if (!releasedMovie) {
+        return {
+          ok: false,
+          error: 'Movie not Found',
+        };
+      }
+      await this.releasedmovies.delete(releasedMovieId);
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not delete released movie',
       };
     }
   }

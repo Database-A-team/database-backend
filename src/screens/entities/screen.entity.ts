@@ -1,9 +1,11 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { ReleasedMovie } from 'src/movies/entities/released-movie.entity';
 import { SeatRow } from 'src/seats/entities/seatRow.entity';
 import { Theater } from 'src/theaters/entities/theater.entity';
 import {
   Column,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -32,4 +34,8 @@ export class Screen {
   @OneToMany(() => SeatRow, (seatRows) => seatRows.screen)
   @Field(() => [SeatRow])
   seatRows: SeatRow[];
+
+  @ManyToMany(() => ReleasedMovie, (releasedMovie) => releasedMovie.screens)
+  @Field(() => [ReleasedMovie])
+  releasedMovies: ReleasedMovie[];
 }

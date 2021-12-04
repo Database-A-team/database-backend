@@ -57,7 +57,6 @@ import { Genre } from './movies/entities/genre.entity';
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod',
       autoLoadEntities: true,
-      entities: [User, Verification],
     }),
     UsersModule,
     JwtModule.forRoot({

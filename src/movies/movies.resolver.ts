@@ -12,14 +12,27 @@ import { Role } from 'src/auth/role.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { AllGenresOutput } from './dtos/all-genres.dto';
 import { CreateMovieInput, CreateMovieOutput } from './dtos/create-movie.dto';
+import {
+  CreateReleasedMovieInput,
+  CreateReleasedMovieOutput,
+} from './dtos/create-released-movie.dto';
 import { DeleteMovieInput, DeleteMovieOutput } from './dtos/delete-movie.dto';
+import {
+  DeleteReleasedMovieInput,
+  DeleteReleasedMovieOutput,
+} from './dtos/delete-released-movie.dto';
 import { EditMovieInput, EditMovieOutput } from './dtos/edit-movie.dto';
+import {
+  EditReleasedMovieInput,
+  EditReleasedMovieOutput,
+} from './dtos/edit-released-movie.dto';
 import { GenreInput, GenreOutput } from './dtos/genre.dto';
 import { MovieInput, MovieOutput } from './dtos/movie.dto';
 import { MoviesInput, MoviesOutput } from './dtos/movies.dto';
 import { SearchMovieInput, SearchMovieOutput } from './dtos/search-movie.dto';
 import { Genre } from './entities/genre.entity';
 import { Movie } from './entities/movie.entity';
+import { ReleasedMovie } from './entities/released-movie.entity';
 import { MovieService } from './movies.service';
 
 @Resolver((of) => Movie)
@@ -88,5 +101,34 @@ export class GenreResolver {
   @Query((type) => GenreOutput)
   genre(@Args('input') genreInput: GenreInput): Promise<GenreOutput> {
     return this.movieService.findGenreBySlug(genreInput);
+  }
+}
+
+@Resolver((of) => ReleasedMovie)
+export class ReleasedMovieResolver {
+  constructor(private readonly movieService: MovieService) {}
+
+  @Mutation((type) => CreateReleasedMovieOutput)
+  @Role(['Admin'])
+  createReleasedMovie(
+    @Args('input') createReleasedMovieInput: CreateReleasedMovieInput,
+  ): Promise<CreateReleasedMovieOutput> {
+    return this.movieService.createReleasedMovie(createReleasedMovieInput);
+  }
+
+  @Mutation((type) => EditReleasedMovieOutput)
+  @Role(['Admin'])
+  editReleasedMovie(
+    @Args('input') editReleasedMovieInput: EditReleasedMovieInput,
+  ): Promise<EditReleasedMovieOutput> {
+    return this.movieService.editReleasedMovie(editReleasedMovieInput);
+  }
+
+  @Mutation((type) => DeleteReleasedMovieOutput)
+  @Role(['Admin'])
+  deleteReleasedMovie(
+    @Args('input') deleteReleasedMovieInput: DeleteReleasedMovieInput,
+  ): Promise<DeleteReleasedMovieOutput> {
+    return this.movieService.deleteReleasedMovie(deleteReleasedMovieInput);
   }
 }
