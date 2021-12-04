@@ -10,6 +10,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
+import { SeatsModule } from './seats/seats.module';
+import { ScreensModule } from './screens/screens.module';
+import { TheatersModule } from './theaters/theaters.module';
+import { AreasModule } from './areas/areas.module';
+import { FacilitiesModule } from './facilities/facilities.module';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { Verification } from './users/entities/verification.entity';
@@ -51,7 +56,8 @@ import { Genre } from './movies/entities/genre.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod',
-      entities: [User, Verification, Movie, Genre],
+      autoLoadEntities: true,
+      entities: [User, Verification],
     }),
     UsersModule,
     JwtModule.forRoot({
@@ -64,6 +70,11 @@ import { Genre } from './movies/entities/genre.entity';
     }),
     AuthModule,
     MoviesModule,
+    AreasModule,
+    FacilitiesModule,
+    ScreensModule,
+    SeatsModule,
+    TheatersModule,
   ],
   controllers: [],
   providers: [],
