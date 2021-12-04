@@ -1,5 +1,5 @@
 import { InputType, ObjectType } from '@nestjs/graphql';
-import { CoreEntity } from 'src/common/entities/core.entity';
+import { CoreEntity } from '../../common/entities/core.entity';
 import { Entity, JoinColumn, OneToOne } from 'typeorm';
 import { Movie } from './movie.entity';
 
