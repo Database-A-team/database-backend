@@ -54,6 +54,7 @@ import { AuthModule } from './auth/auth.module';
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod',
       autoLoadEntities: true,
+      entities: [User, Verification],
     }),
     UsersModule,
     JwtModule.forRoot({
