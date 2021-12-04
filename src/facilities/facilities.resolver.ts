@@ -6,42 +6,47 @@ import { FacilitiesService } from './facilities.service';
 
 @Resolver(() => Facility)
 export class FacilitiesResolver {
-    constructor(
-        private readonly facilitiesService: FacilitiesService
-    ) {}
+  constructor(private readonly facilitiesService: FacilitiesService) {}
 
-    @Mutation(() => Facility)
-    createFacility(@Args('createFacilityInput') createFacilityInput: CreateFacilityInput) {
-        return this.facilitiesService.create(createFacilityInput);
-    }
+  @Mutation(() => Facility)
+  createFacility(
+    @Args('createFacilityInput') createFacilityInput: CreateFacilityInput,
+  ) {
+    return this.facilitiesService.create(createFacilityInput);
+  }
 
-    @Query(() => [Facility])
-    findAllFacility() {
-        return this.facilitiesService.findAll();
-    }
+  @Query(() => [Facility])
+  findAllFacility() {
+    return this.facilitiesService.findAll();
+  }
 
-    @Query(() => Facility)
-    findFacilityById(@Args('id') id: number) {
-        return this.facilitiesService.findOneById(id);
-    }
+  @Query(() => Facility)
+  findFacilityById(@Args('id') id: number) {
+    return this.facilitiesService.findOneById(id);
+  }
 
-    @Query(() => Facility)
-    findFacilityByName(@Args('name') name: string) {
-        return this.facilitiesService.findOneByName(name);
-    }
+  @Query(() => Facility)
+  findFacilityByName(@Args('name') name: string) {
+    return this.facilitiesService.findOneByName(name);
+  }
 
-    @Query(() => [Facility])
-    searchFacilityByName(@Args('name') name: string) {
-        return this.facilitiesService.searchByName(name);
-    }
+  @Query(() => [Facility])
+  searchFacilityByName(@Args('name') name: string) {
+    return this.facilitiesService.searchByName(name);
+  }
 
-    @Mutation(() => Facility)
-    updateFacility(@Args('updateFacilityInput') updateFacilityInput: UpdateFacilityInput) {
-        return this.facilitiesService.update(updateFacilityInput.id, updateFacilityInput);
-    }
+  @Mutation(() => Facility)
+  updateFacility(
+    @Args('updateFacilityInput') updateFacilityInput: UpdateFacilityInput,
+  ) {
+    return this.facilitiesService.update(
+      updateFacilityInput.id,
+      updateFacilityInput,
+    );
+  }
 
-    @Mutation(() => Boolean)
-    deleteFacility(@Args('id') id: number) {
-        return this.facilitiesService.delete(id);
-    }
+  @Mutation(() => Boolean)
+  deleteFacility(@Args('id') id: number) {
+    return this.facilitiesService.delete(id);
+  }
 }

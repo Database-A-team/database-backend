@@ -7,6 +7,6 @@ import { SpecialScreen } from './entities/specialScreen.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Screen, SpecialScreen])],
-  providers: [ScreensService, ScreensResolver]
+  providers: [ScreensService, ScreensResolver],
 })
 export class ScreensModule {}

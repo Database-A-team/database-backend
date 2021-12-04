@@ -1,10 +1,10 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
+import { Field, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CreateSpecialScreenInput {
-    @Field(() => String)
-    name: string;
+  @Field(() => String)
+  name: string;
 
-    @Field(() => [Int], {nullable: true})
-    screenIds: number[];
+  @Field(() => [Int], { nullable: true })
+  screenIds: number[];
 }

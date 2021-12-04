@@ -6,6 +6,6 @@ import { Facility } from './entities/facility.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Facility])],
-  providers: [FacilitiesService, FacilitiesResolver]
+  providers: [FacilitiesService, FacilitiesResolver],
 })
 export class FacilitiesModule {}

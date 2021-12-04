@@ -6,6 +6,6 @@ import { Area } from './entities/area.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Area])],
-  providers: [AreasService, AreasResolver]
+  providers: [AreasService, AreasResolver],
 })
 export class AreasModule {}

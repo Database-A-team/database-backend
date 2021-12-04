@@ -8,6 +8,6 @@ import { SeatType } from './entities/seatType.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Seat, SeatRow, SeatType])],
-  providers: [SeatsService, SeatsResolver]
+  providers: [SeatsService, SeatsResolver],
 })
 export class SeatsModule {}
