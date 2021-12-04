@@ -20,6 +20,9 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
 import { AuthModule } from './auth/auth.module';
+import { MoviesModule } from './movies/movies.module';
+import { Movie } from './movies/entities/movie.entity';
+import { Genre } from './movies/entities/genre.entity';
 
 @Module({
   imports: [
@@ -66,6 +69,7 @@ import { AuthModule } from './auth/auth.module';
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
     }),
     AuthModule,
+    MoviesModule,
     AreasModule,
     FacilitiesModule,
     ScreensModule,
