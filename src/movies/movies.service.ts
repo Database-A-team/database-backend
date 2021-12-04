@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { Like, Raw, Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 import { AllGenresOutput } from './dtos/all-genres.dto';
 import { CreateMovieInput, CreateMovieOutput } from './dtos/create-movie.dto';
 import { DeleteMovieInput, DeleteMovieOutput } from './dtos/delete-movie.dto';
