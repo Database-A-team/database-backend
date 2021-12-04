@@ -29,4 +29,11 @@ export class TheatersResolver {
       updateTheaterInput,
     );
   }
+
+  @Mutation(() => Boolean)
+  deleteTheater(
+    @Args('id') id: number,
+  ) {
+    return this.theatersService.deleteTheater(id);
+  }
 }
