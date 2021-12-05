@@ -6,10 +6,12 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToMany,
   OneToOne,
 } from 'typeorm';
 import { Movie } from './movie.entity';
 import { Screen } from 'src/screens/entities/screen.entity';
+import { Reservation } from 'src/reservations/entities/reservations.entity';
 
 @InputType('TimeTableInputType', { isAbstract: true })
 @ObjectType()
@@ -38,6 +40,16 @@ export class ReleasedMovie extends CoreEntity {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  @JoinTable()
   screens: Screen[];
+
+  @Field((type) => [Reservation])
+  @OneToMany(
+    (type) => Reservation,
+    (reservation) => reservation.releasedMovie,
+    {
+      onDelete: 'SET NULL',
+      nullable: true,
+    },
+  )
+  reservations: Reservation[];
 }
