@@ -11,6 +11,7 @@ export class CreateMovieInput extends PickType(Movie, [
   'duration',
   'openDate',
   'info',
+  'rating',
 ]) {
   @Field((type) => String)
   genreName: string;

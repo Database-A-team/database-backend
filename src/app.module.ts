@@ -23,6 +23,7 @@ import { AuthModule } from './auth/auth.module';
 import { MoviesModule } from './movies/movies.module';
 import { Movie } from './movies/entities/movie.entity';
 import { Genre } from './movies/entities/genre.entity';
+import { ReservationsModule } from './reservations/reservations.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { Genre } from './movies/entities/genre.entity';
     ScreensModule,
     SeatsModule,
     TheatersModule,
+    ReservationsModule,
   ],
   controllers: [],
   providers: [],

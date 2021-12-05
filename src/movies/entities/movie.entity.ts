@@ -2,8 +2,16 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsBoolean, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToMany, ManyToOne, RelationId } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToOne,
+  RelationId,
+} from 'typeorm';
 import { Genre } from './genre.entity';
+import { ReleasedMovie } from './released-movie.entity';
 
 @InputType('MovieInputType', { isAbstract: true })
 @ObjectType()
@@ -39,10 +47,6 @@ export class Movie extends CoreEntity {
   })
   admin: User;
 
-  @Field((type) => Number)
-  @Column()
-  runningTime: number;
-
   @Field((type) => String)
   @Column()
   director: string;
@@ -70,8 +74,7 @@ export class Movie extends CoreEntity {
   @RelationId((movie: Movie) => movie.admin)
   adminId: number;
 
-  @Column({ default: false })
-  @Field((type) => Boolean)
-  @IsBoolean()
+  @Field((type) => ReleasedMovie)
+  @OneToOne((type) => ReleasedMovie, (releasedMovie) => releasedMovie.movie)
   released: boolean;
 }
