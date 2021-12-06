@@ -24,6 +24,7 @@ import { MoviesModule } from './movies/movies.module';
 import { Movie } from './movies/entities/movie.entity';
 import { Genre } from './movies/entities/genre.entity';
 import { ReservationsModule } from './reservations/reservations.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -45,8 +46,23 @@ import { ReservationsModule } from './reservations/reservations.module';
       }),
     }),
     GraphQLModule.forRoot({
+      installSubscriptionHandlers: true,
       autoSchemaFile: true,
-      context: ({ req }) => ({ user: req['user'] }),
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          onConnect: (connectionParams) => {
+            const TOKEN_KEY = 'x-jwt';
+            const token = connectionParams[TOKEN_KEY];
+            return { token };
+          },
+        },
+      },
+      context: ({ req }) => {
+        const TOKEN_KEY = 'x-jwt';
+        return {
+          token: req.headers[TOKEN_KEY],
+        };
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -76,14 +92,9 @@ import { ReservationsModule } from './reservations/reservations.module';
     SeatsModule,
     TheatersModule,
     ReservationsModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(JwtMiddleware)
-      .forRoutes({ path: '/graphql', method: RequestMethod.POST });
-  }
-}
+export class AppModule {}

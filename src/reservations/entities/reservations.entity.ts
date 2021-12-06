@@ -40,6 +40,7 @@ export class Reservation extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.reservations, {
     onDelete: 'SET NULL',
     nullable: true,
+    eager: true,
   })
   customer?: User;
 
@@ -50,6 +51,7 @@ export class Reservation extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.orders, {
     onDelete: 'SET NULL',
     nullable: true,
+    eager: true,
   })
   staff?: User;
 
@@ -60,6 +62,7 @@ export class Reservation extends CoreEntity {
   @ManyToOne((type) => Screen, (screen) => screen.reservations, {
     onDelete: 'SET NULL',
     nullable: true,
+    eager: true,
   })
   screen?: Screen;
 
@@ -70,6 +73,7 @@ export class Reservation extends CoreEntity {
   @ManyToOne((type) => ReservationItem, {
     nullable: true,
     onDelete: 'SET NULL',
+    eager: true,
   })
   item?: ReservationItem;
 
