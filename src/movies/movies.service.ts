@@ -166,6 +166,9 @@ export class MovieService {
         },
         take: 25,
         skip: (page - 1) * 25,
+        order: {
+          isPromoted: 'DESC',
+        },
       });
       genre.movies = genres;
       const totalResults = await this.countMovies(genre);
@@ -187,6 +190,9 @@ export class MovieService {
       const [movies, totalResults] = await this.movies.findAndCount({
         skip: (page - 1) * 25,
         take: 25,
+        order: {
+          isPromoted: 'DESC',
+        },
       });
       return {
         ok: true,
