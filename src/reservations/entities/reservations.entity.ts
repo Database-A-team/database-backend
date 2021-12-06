@@ -6,11 +6,13 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
+import { IsEnum, IsNumber } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { ReleasedMovie } from 'src/movies/entities/released-movie.entity';
 import { Screen } from 'src/screens/entities/screen.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
+import { ReservationItem } from './reservation-item.entity';
 
 export enum ReservationStatus {
   Reservated = 'Reservated',
@@ -22,7 +24,7 @@ registerEnumType(ReservationStatus, { name: 'ReservationStatus' });
 
 @InputType('ViewerInputType', { isAbstract: true })
 @ObjectType()
-class Viewer {
+export class Viewer {
   @Field((type) => Int)
   youth: number;
 
@@ -41,12 +43,18 @@ export class Reservation extends CoreEntity {
   })
   customer?: User;
 
+  @RelationId((reservation: Reservation) => reservation.customer)
+  customerId: number;
+
   @Field((type) => User, { nullable: true })
   @ManyToOne((type) => User, (user) => user.orders, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   staff?: User;
+
+  @RelationId((reservation: Reservation) => reservation.staff)
+  staffId: number;
 
   @Field((type) => Screen)
   @ManyToOne((type) => Screen, (screen) => screen.reservations, {
@@ -55,26 +63,27 @@ export class Reservation extends CoreEntity {
   })
   screen?: Screen;
 
-  @Field((type) => ReleasedMovie)
-  @ManyToOne(
-    (type) => ReleasedMovie,
-    (releasedmovie) => releasedmovie.reservations,
-    {
-      onDelete: 'SET NULL',
-      nullable: true,
-    },
-  )
-  releasedMovie: ReleasedMovie;
+  @ManyToOne((type) => ReleasedMovie, { nullable: true, onDelete: 'CASCADE' })
+  releasedMovie?: ReleasedMovie;
 
-  @Field((type) => Float)
-  @Column()
-  total: number;
+  @Field((type) => ReservationItem)
+  @ManyToOne((type) => ReservationItem, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  item?: ReservationItem;
 
-  @Field((type) => Viewer)
-  @Column({ type: 'json' })
-  viewer: Viewer;
+  @Field((type) => Float, { nullable: true })
+  @Column({ nullable: true })
+  @IsNumber()
+  total?: number;
 
-  @Column({ type: 'enum', enum: ReservationStatus })
+  @Column({
+    type: 'enum',
+    enum: ReservationStatus,
+    default: ReservationStatus.Reservated,
+  })
   @Field((type) => ReservationStatus)
+  @IsEnum(ReservationStatus)
   status: ReservationStatus;
 }

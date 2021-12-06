@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Screen } from 'src/screens/entities/screen.entity';
 import {
   Column,
@@ -12,6 +12,7 @@ import {
 import { Area } from '../../areas/entities/area.entity';
 import { Facility } from '../../facilities/entities/facility.entity';
 
+@InputType('TheaterInputType', { isAbstract: true })
 @Entity()
 @ObjectType()
 export class Theater {

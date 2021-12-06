@@ -11,7 +11,7 @@ import { Seat } from './seat.entity';
 
 @Entity()
 @ObjectType()
-@InputType({ isAbstract: true })
+@InputType('SeatRowInputType', { isAbstract: true })
 export class SeatRow {
   @PrimaryGeneratedColumn('increment')
   @Field(() => Int)
@@ -21,9 +21,9 @@ export class SeatRow {
   @Field(() => String)
   rowName: string;
 
-  @OneToMany(() => Seat, (seats) => seats.seatRow)
+  @OneToMany(() => Seat, (seats) => seats.seatRow, { nullable: true })
   @Field(() => [Seat])
-  seats: Seat[];
+  seats?: Seat[];
 
   @ManyToOne(() => Screen, (screen) => screen.seatRows)
   @Field(() => Screen)
