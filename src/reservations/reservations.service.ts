@@ -1,5 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PubSub } from 'graphql-subscriptions';
+import {
+  NEW_PENDING_RESERVATION,
+  NEW_RESERVATION_UPDATE,
+  PUB_SUB,
+} from 'src/common/common.constants';
 import { Movie } from 'src/movies/entities/movie.entity';
 import { ReleasedMovie } from 'src/movies/entities/released-movie.entity';
 import { Screen } from 'src/screens/entities/screen.entity';
@@ -22,6 +28,10 @@ import {
   GetReservationsInput,
   GetReservationsOutput,
 } from './dtos/get-reservations.dto';
+import {
+  TakeReservationInput,
+  TakeReservationOutput,
+} from './dtos/take-reservation.dto';
 import { ReservationItem } from './entities/reservation-item.entity';
 import { Reservation, ReservationStatus } from './entities/reservations.entity';
 
@@ -40,6 +50,7 @@ export class ReservationService {
     private readonly seats: Repository<Seat>,
     @InjectRepository(Movie)
     private readonly movies: Repository<Movie>,
+    @Inject(PUB_SUB) private readonly pubSub: PubSub,
   ) {}
 
   async createReservation(
@@ -92,6 +103,9 @@ export class ReservationService {
           total: ticketPrice,
         }),
       );
+      await this.pubSub.publish(NEW_PENDING_RESERVATION, {
+        pendingReservations: reservation,
+      });
       return {
         ok: true,
       };
@@ -197,12 +211,6 @@ export class ReservationService {
     if (user.role === UserRole.Staff && reservation.customerId !== user.id) {
       canSee = false;
     }
-    if (
-      user.role === UserRole.Admin &&
-      reservation.releasedMovie.movie.adminId !== user.id
-    ) {
-      canSee = false;
-    }
     return canSee;
   }
 
@@ -247,13 +255,47 @@ export class ReservationService {
           status,
         },
       ]);
+      const newReservation = { ...reservation, status };
+      await this.pubSub.publish(NEW_RESERVATION_UPDATE, {
+        orderUpdates: newReservation,
+      });
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  async takeReservation(
+    staff: User,
+    { id: reservationId }: TakeReservationInput,
+  ): Promise<TakeReservationOutput> {
+    try {
+      const reservation = await this.reservations.findOne(reservationId);
+      if (!reservation) {
+        return {
+          ok: false,
+          error: 'Reservation Not Found',
+        };
+      }
+      await this.reservations.save({
+        id: reservationId,
+        staff,
+      });
+      await this.pubSub.publish(NEW_RESERVATION_UPDATE, {
+        reservationUpdates: { ...reservation, staff },
+      });
       return {
         ok: true,
       };
     } catch {
       return {
         ok: false,
-        error: 'Could not edit Reservation.',
+        error: 'Could not take reservation.',
       };
     }
   }
