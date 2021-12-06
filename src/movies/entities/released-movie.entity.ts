@@ -1,21 +1,12 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { CoreEntity } from '../../common/entities/core.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany, OneToOne } from 'typeorm';
 import { Movie } from './movie.entity';
 import { Screen } from 'src/screens/entities/screen.entity';
-import { Reservation } from 'src/reservations/entities/reservations.entity';
 
 @InputType('TimeTableInputType', { isAbstract: true })
 @ObjectType()
-class TimeTable {
+export class TimeTable {
   @Field((type) => String)
   startTime: string;
 
@@ -41,15 +32,4 @@ export class ReleasedMovie extends CoreEntity {
     onDelete: 'CASCADE',
   })
   screens: Screen[];
-
-  @Field((type) => [Reservation])
-  @OneToMany(
-    (type) => Reservation,
-    (reservation) => reservation.releasedMovie,
-    {
-      onDelete: 'SET NULL',
-      nullable: true,
-    },
-  )
-  reservations: Reservation[];
 }

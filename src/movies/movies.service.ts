@@ -263,6 +263,7 @@ export class MovieService {
       const releasedMovie = await this.releasedmovies.save(
         this.releasedmovies.create({ ...createReleasedMovieInput, movie }),
       );
+      movie.released = releasedMovie;
       return {
         ok: true,
       };

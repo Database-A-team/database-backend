@@ -1,7 +1,8 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Theater } from '../../theaters/entities/theater.entity';
 
+@InputType('AreaInputType', { isAbstract: true })
 @Entity()
 @ObjectType()
 export class Area {

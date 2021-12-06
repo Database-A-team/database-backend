@@ -8,7 +8,7 @@ export class CreateSeatRowInput extends PickType(
   InputType,
 ) {
   @Field(() => [Int], { nullable: true })
-  seatIds: number[];
+  seatIds?: number[];
 
   @Field(() => Int, { nullable: true })
   screenId: number;

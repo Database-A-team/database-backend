@@ -87,7 +87,6 @@ export class SeatsService {
         throw new NotFoundException(
           `Screen id ${createSeatRowInput.screenId} is not found`,
         );
-
       seatRow.screen = screen;
     }
 
@@ -216,6 +215,7 @@ export class SeatsService {
     }
 
     if (updateSeatRowInput.seatIds) {
+      if (seatRow.seats === undefined) seatRow.seats = [];
       for (const seatId of updateSeatRowInput.seatIds) {
         let seat = await this.seatRepository.findOne({ id: id });
         if (!seat)
