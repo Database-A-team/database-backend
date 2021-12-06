@@ -77,4 +77,12 @@ export class Movie extends CoreEntity {
   @Field((type) => ReleasedMovie)
   @OneToOne((type) => ReleasedMovie, (releasedMovie) => releasedMovie.movie)
   released: ReleasedMovie;
+
+  @Field((type) => Boolean)
+  @Column({ default: false })
+  isPromoted: boolean;
+
+  @Field((type) => Date, { nullable: true })
+  @Column({ nullable: true })
+  promotedUntil: Date;
 }

@@ -1,30 +1,22 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import * as Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
-import { User } from './users/entities/user.entity';
 import { SeatsModule } from './seats/seats.module';
 import { ScreensModule } from './screens/screens.module';
 import { TheatersModule } from './theaters/theaters.module';
 import { AreasModule } from './areas/areas.module';
 import { FacilitiesModule } from './facilities/facilities.module';
 import { JwtModule } from './jwt/jwt.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
-import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
 import { AuthModule } from './auth/auth.module';
 import { MoviesModule } from './movies/movies.module';
-import { Movie } from './movies/entities/movie.entity';
-import { Genre } from './movies/entities/genre.entity';
 import { ReservationsModule } from './reservations/reservations.module';
 import { CommonModule } from './common/common.module';
+import { PaymentsModule } from './payments/payments.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -76,6 +68,7 @@ import { CommonModule } from './common/common.module';
       autoLoadEntities: true,
     }),
     UsersModule,
+    ScheduleModule.forRoot(),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
@@ -93,6 +86,7 @@ import { CommonModule } from './common/common.module';
     TheatersModule,
     ReservationsModule,
     CommonModule,
+    PaymentsModule,
   ],
   controllers: [],
   providers: [],
