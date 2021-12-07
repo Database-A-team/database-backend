@@ -160,22 +160,23 @@ export class MovieService {
           error: 'Genre not found',
         };
       }
-      const genres = await this.movies.find({
+      const movies = await this.movies.find({
         where: {
           genre,
         },
-        take: 25,
-        skip: (page - 1) * 25,
+        take: 3,
+        skip: (page - 1) * 3,
         order: {
           isPromoted: 'DESC',
         },
       });
-      genre.movies = genres;
+      genre.movies = movies;
       const totalResults = await this.countMovies(genre);
       return {
         ok: true,
         genre,
-        totalPages: Math.ceil(totalResults / 25),
+        movies,
+        totalPages: Math.ceil(totalResults / 3),
       };
     } catch {
       return {
@@ -188,8 +189,8 @@ export class MovieService {
   async allMovies({ page }: MoviesInput): Promise<MoviesOutput> {
     try {
       const [movies, totalResults] = await this.movies.findAndCount({
-        skip: (page - 1) * 25,
-        take: 25,
+        skip: (page - 1) * 3,
+        take: 3,
         order: {
           isPromoted: 'DESC',
         },
@@ -197,7 +198,7 @@ export class MovieService {
       return {
         ok: true,
         movies,
-        totalPages: Math.ceil(totalResults / 25),
+        totalPages: Math.ceil(totalResults / 3),
         totalItems: totalResults,
       };
     } catch {
@@ -245,7 +246,7 @@ export class MovieService {
         ok: true,
         movies,
         totalItems: totalResults,
-        totalPages: Math.ceil(totalResults / 25),
+        totalPages: Math.ceil(totalResults / 3),
       };
     } catch {
       return {

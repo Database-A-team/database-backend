@@ -31,6 +31,7 @@ export class Movie extends CoreEntity {
   @ManyToOne((type) => Genre, (genre) => genre.movies, {
     nullable: true,
     onDelete: 'SET NULL',
+    eager: true,
   })
   genre: Genre;
 
