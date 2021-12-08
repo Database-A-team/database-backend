@@ -1,6 +1,6 @@
 import { Field, InputType, Int, ObjectType, PickType } from '@nestjs/graphql';
 import { MutationOutput } from 'src/common/dtos/output.dtos';
-import { TimeTable } from 'src/movies/entities/released-movie.entity';
+import { TimeTable } from 'src/screens/entities/screen.entity';
 import { Seat } from 'src/seats/entities/seat.entity';
 import {
   ReservationTimeTable,

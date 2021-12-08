@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Screen } from 'src/screens/entities/screen.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Raw, Repository } from 'typeorm';
 import { AllGenresOutput } from './dtos/all-genres.dto';
@@ -21,6 +22,7 @@ import {
 import { GenreInput, GenreOutput } from './dtos/genre.dto';
 import { MovieInput, MovieOutput } from './dtos/movie.dto';
 import { MoviesInput, MoviesOutput } from './dtos/movies.dto';
+import { MyMovieInput, MyMovieOutput } from './dtos/my-movie';
 import { SearchMovieInput, SearchMovieOutput } from './dtos/search-movie.dto';
 import { Genre } from './entities/genre.entity';
 import { Movie } from './entities/movie.entity';
@@ -35,6 +37,8 @@ export class MovieService {
     private readonly genres: GenreRepository,
     @InjectRepository(ReleasedMovie)
     private readonly releasedmovies: Repository<ReleasedMovie>,
+    @InjectRepository(Screen)
+    private readonly screens: Repository<Screen>,
   ) {}
 
   async createMovie(
@@ -43,12 +47,12 @@ export class MovieService {
   ): Promise<CreateMovieOutput> {
     try {
       const newMovie = this.movies.create(createMovieInput);
-      newMovie.admin = admin;
       const genre = await this.genres.getOrCreate(createMovieInput.genreName);
       newMovie.genre = genre;
       await this.movies.save(newMovie);
       return {
         ok: true,
+        movieId: newMovie.id,
       };
     } catch {
       return {
@@ -70,14 +74,6 @@ export class MovieService {
         return {
           ok: false,
           error: 'Movie not found',
-        };
-      }
-      if (admin.id !== movie.adminId) {
-        // 지금은 초기에 등록한 어드민이 아니면 수정 불가.
-        // 추후 다른 어드민이 수정하면 어드민을 바꿀 것.
-        return {
-          ok: false,
-          error: "You can't edit a Movie",
         };
       }
       let genre: Genre = null;
@@ -112,12 +108,6 @@ export class MovieService {
         return {
           ok: false,
           error: 'Movie not found',
-        };
-      }
-      if (admin.id !== movie.adminId) {
-        return {
-          ok: false,
-          error: "You can't delete a movie.",
         };
       }
       await this.movies.delete(movieId);
@@ -267,8 +257,23 @@ export class MovieService {
           error: 'Movie Not Found',
         };
       }
+      const screens: Screen[] = [];
+      for (const screenId of createReleasedMovieInput.screenIds) {
+        const screen = await this.screens.findOne(screenId);
+        if (!screen) {
+          return {
+            ok: false,
+            error: 'Screen not Found.',
+          };
+        }
+        screens.push(screen);
+      }
       const releasedMovie = await this.releasedmovies.save(
-        this.releasedmovies.create({ ...createReleasedMovieInput, movie }),
+        this.releasedmovies.create({
+          ...createReleasedMovieInput,
+          movie,
+          screens,
+        }),
       );
       movie.released = releasedMovie;
       return {
@@ -336,6 +341,24 @@ export class MovieService {
       return {
         ok: false,
         error: 'Could not delete released movie',
+      };
+    }
+  }
+
+  async myMovie(admin: User, { id }: MyMovieInput): Promise<MyMovieOutput> {
+    try {
+      const movie = await this.movies.findOne(
+        { id },
+        { relations: ['released'] },
+      );
+      return {
+        movie,
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not get myMovie',
       };
     }
   }

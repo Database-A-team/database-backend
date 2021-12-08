@@ -42,12 +42,6 @@ export class Movie extends CoreEntity {
   })
   favUser: User;
 
-  @Field((type) => User)
-  @ManyToOne((type) => User, (user) => user.enrollMovies, {
-    onDelete: 'SET NULL',
-  })
-  admin: User;
-
   @Field((type) => String)
   @Column()
   director: string;
@@ -71,9 +65,6 @@ export class Movie extends CoreEntity {
   @Field((type) => String)
   @Column()
   duration: string;
-
-  @RelationId((movie: Movie) => movie.admin)
-  adminId: number;
 
   @Field((type) => ReleasedMovie)
   @OneToOne((type) => ReleasedMovie, (releasedMovie) => releasedMovie.movie)

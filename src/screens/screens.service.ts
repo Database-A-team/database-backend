@@ -1,9 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Theater } from 'src/theaters/entities/theater.entity';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Raw, Repository } from 'typeorm';
 import { CreateScreenInput } from './dtos/create-screen.input';
 import { CreateSpecialScreenInput } from './dtos/create-specialScreen.input';
+import {
+  SearchScreenInput,
+  SearchScreenOutput,
+} from './dtos/search-screen.dto';
 import { UpdateScreenInput } from './dtos/update-screen.input';
 import { UpdateSpecialScreenInput } from './dtos/update-specialScreen.input';
 import { Screen } from './entities/screen.entity';
@@ -21,6 +25,7 @@ export class ScreensService {
   async createScreen(createScreenInput: CreateScreenInput): Promise<Screen> {
     let screen = new Screen();
     screen.name = createScreenInput.name;
+    screen.timeTables = createScreenInput.timeTables;
 
     if (createScreenInput.theaterId) {
       const theater = await getRepository(Theater).findOne({
@@ -190,5 +195,29 @@ export class ScreensService {
 
     await this.specialScreenRepository.remove(specialScreen);
     return true;
+  }
+
+  async searchScreenByName({
+    query,
+    page,
+  }: SearchScreenInput): Promise<SearchScreenOutput> {
+    try {
+      const [screens, totalResults] = await this.screenRepository.findAndCount({
+        where: {
+          name: Raw((name) => `${name} ILIKE '%${query}%'`),
+        },
+      });
+      return {
+        ok: true,
+        screens,
+        totalItems: totalResults,
+        totalPages: Math.ceil(totalResults / 25),
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not search Screen',
+      };
+    }
   }
 }

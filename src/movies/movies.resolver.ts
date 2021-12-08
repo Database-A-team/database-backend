@@ -29,6 +29,7 @@ import {
 import { GenreInput, GenreOutput } from './dtos/genre.dto';
 import { MovieInput, MovieOutput } from './dtos/movie.dto';
 import { MoviesInput, MoviesOutput } from './dtos/movies.dto';
+import { MyMovieInput, MyMovieOutput } from './dtos/my-movie';
 import { SearchMovieInput, SearchMovieOutput } from './dtos/search-movie.dto';
 import { Genre } from './entities/genre.entity';
 import { Movie } from './entities/movie.entity';
@@ -46,6 +47,15 @@ export class MovieResolver {
     @Args('input') createMovieInput: CreateMovieInput,
   ): Promise<CreateMovieOutput> {
     return this.movieService.createMovie(authUser, createMovieInput);
+  }
+
+  @Query((returns) => MyMovieOutput)
+  @Role(['Admin'])
+  myMovie(
+    @AuthUser() admin: User,
+    @Args('input') myMovieInput: MyMovieInput,
+  ): Promise<MyMovieOutput> {
+    return this.movieService.myMovie(admin, myMovieInput);
   }
 
   @Mutation((returns) => EditMovieOutput)
