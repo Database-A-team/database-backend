@@ -14,4 +14,7 @@ export class CreateScreenInput {
 
   @Field(() => [TimeTable], { nullable: true })
   timeTables: TimeTable[];
+
+  @Field(() => [Int], {nullable: true})
+  stairs: number;
 }
