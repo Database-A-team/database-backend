@@ -14,6 +14,16 @@ import {
 } from 'typeorm';
 import { SpecialScreen } from './specialScreen.entity';
 
+@InputType('TimeTableInputType', { isAbstract: true })
+@ObjectType()
+export class TimeTable {
+  @Field((type) => Date)
+  startTime: Date;
+
+  @Field((type) => Date)
+  endTime: Date;
+}
+
 @InputType('ScreenInputType', { isAbstract: true })
 @Entity()
 @ObjectType()
@@ -26,7 +36,7 @@ export class Screen {
   @Field(() => String)
   name: string;
 
-  @ManyToOne(() => Theater, (theater) => theater.screens)
+  @ManyToOne(() => Theater, (theater) => theater.screens, { eager: true })
   @Field(() => Theater, { nullable: true })
   theater: Theater;
 
@@ -42,12 +52,18 @@ export class Screen {
   @Field(() => [Int])
   stairs: number[];
 
-  @ManyToMany(() => ReleasedMovie, (releasedMovie) => releasedMovie.screens)
-  @Field(() => [ReleasedMovie])
+  @ManyToMany(() => ReleasedMovie, (releasedMovie) => releasedMovie.screens, {
+    nullable: true,
+  })
+  @Field(() => [ReleasedMovie], { nullable: true })
   @JoinTable()
-  releasedMovies: ReleasedMovie[];
+  releasedMovies?: ReleasedMovie[];
 
-  @Field((type) => [Reservation])
+  @Field((type) => [Reservation], { nullable: true })
   @OneToMany((type) => Reservation, (reservation) => reservation.screen)
-  reservations: Reservation[];
+  reservations?: Reservation[];
+
+  @Field((type) => [TimeTable], { nullable: true })
+  @Column({ type: 'json' })
+  timeTables?: TimeTable[];
 }

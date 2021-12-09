@@ -1,6 +1,10 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateScreenInput } from './dtos/create-screen.input';
 import { CreateSpecialScreenInput } from './dtos/create-specialScreen.input';
+import {
+  SearchScreenInput,
+  SearchScreenOutput,
+} from './dtos/search-screen.dto';
 import { UpdateScreenInput } from './dtos/update-screen.input';
 import { UpdateSpecialScreenInput } from './dtos/update-specialScreen.input';
 import { Screen } from './entities/screen.entity';
@@ -85,5 +89,12 @@ export class ScreensResolver {
   @Mutation(() => Boolean)
   deleteSpecialScreen(@Args('id') id: number) {
     return this.screensService.deleteSpecialScreen(id);
+  }
+
+  @Query((returns) => SearchScreenOutput)
+  searchScreen(
+    @Args('input') searchScreenInput: SearchScreenInput,
+  ): Promise<SearchScreenOutput> {
+    return this.screensService.searchScreenByName(searchScreenInput);
   }
 }

@@ -12,7 +12,7 @@ import { ReleasedMovie } from '../entities/released-movie.entity';
 @InputType()
 export class EditReleasedMovieInput extends PickType(
   PartialType(ReleasedMovie),
-  ['timeTable'],
+  ['screens'],
 ) {
   @Field((type) => Int)
   releasedMovieId: number;

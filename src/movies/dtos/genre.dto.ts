@@ -5,6 +5,7 @@ import {
   PaginationOutput,
 } from 'src/common/dtos/pagination.dto';
 import { Genre } from '../entities/genre.entity';
+import { Movie } from '../entities/movie.entity';
 
 @InputType()
 export class GenreInput extends PaginationInput {
@@ -16,4 +17,6 @@ export class GenreInput extends PaginationInput {
 export class GenreOutput extends PaginationOutput {
   @Field((type) => Genre, { nullable: true })
   genre?: Genre;
+  @Field((type) => [Movie], { nullable: true })
+  movies?: Movie[];
 }

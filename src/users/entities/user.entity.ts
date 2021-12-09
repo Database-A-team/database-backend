@@ -59,10 +59,6 @@ export class User extends CoreEntity {
   })
   favMovies: Movie[];
 
-  @Field((type) => [Movie])
-  @OneToMany((type) => Movie, (movie) => movie.admin)
-  enrollMovies: Movie[];
-
   @Field((type) => [Reservation])
   @OneToMany((type) => Reservation, (reservation) => reservation.customer)
   reservations: Reservation[];

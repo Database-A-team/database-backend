@@ -6,11 +6,11 @@ import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 @InputType('ReservationTimeTableInputType', { isAbstract: true })
 @ObjectType()
 export class ReservationTimeTable {
-  @Field((type) => String)
-  startTime: string;
+  @Field((type) => Date)
+  startTime: Date;
 
-  @Field((type) => String)
-  endTime: string;
+  @Field((type) => Date)
+  endTime: Date;
 }
 
 @InputType('ReservationViewerInputType', { isAbstract: true })

@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType, PickType } from '@nestjs/graphql';
 import { MutationOutput } from 'src/common/dtos/output.dtos';
 import { Movie } from '../entities/movie.entity';
 
@@ -18,4 +18,7 @@ export class CreateMovieInput extends PickType(Movie, [
 }
 
 @ObjectType()
-export class CreateMovieOutput extends MutationOutput {}
+export class CreateMovieOutput extends MutationOutput {
+  @Field((type) => Int)
+  movieId?: number;
+}

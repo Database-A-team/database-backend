@@ -31,6 +31,7 @@ export class Movie extends CoreEntity {
   @ManyToOne((type) => Genre, (genre) => genre.movies, {
     nullable: true,
     onDelete: 'SET NULL',
+    eager: true,
   })
   genre: Genre;
 
@@ -40,12 +41,6 @@ export class Movie extends CoreEntity {
     onDelete: 'SET NULL',
   })
   favUser: User;
-
-  @Field((type) => User)
-  @ManyToOne((type) => User, (user) => user.enrollMovies, {
-    onDelete: 'SET NULL',
-  })
-  admin: User;
 
   @Field((type) => String)
   @Column()
@@ -71,11 +66,10 @@ export class Movie extends CoreEntity {
   @Column()
   duration: string;
 
-  @RelationId((movie: Movie) => movie.admin)
-  adminId: number;
-
   @Field((type) => ReleasedMovie)
-  @OneToOne((type) => ReleasedMovie, (releasedMovie) => releasedMovie.movie)
+  @OneToOne((type) => ReleasedMovie, (releasedMovie) => releasedMovie.movie, {
+    nullable: true,
+  })
   released: ReleasedMovie;
 
   @Field((type) => Boolean)
