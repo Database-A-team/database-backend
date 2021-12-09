@@ -70,7 +70,7 @@ export class Movie extends CoreEntity {
   @OneToOne((type) => ReleasedMovie, (releasedMovie) => releasedMovie.movie, {
     nullable: true,
   })
-  released: ReleasedMovie;
+  released?: ReleasedMovie;
 
   @Field((type) => Boolean)
   @Column({ default: false })

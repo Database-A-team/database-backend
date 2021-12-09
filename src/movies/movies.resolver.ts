@@ -11,6 +11,7 @@ import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { AllGenresOutput } from './dtos/all-genres.dto';
+import { AllMoviesOutput } from './dtos/all-movies.dto';
 import { CreateMovieInput, CreateMovieOutput } from './dtos/create-movie.dto';
 import {
   CreateReleasedMovieInput,
@@ -91,6 +92,11 @@ export class MovieResolver {
     @Args('input') searchMovieInput: SearchMovieInput,
   ): Promise<SearchMovieOutput> {
     return this.movieService.searchMovieByName(searchMovieInput);
+  }
+
+  @Query((returns) => AllMoviesOutput)
+  allMovies(): Promise<AllMoviesOutput> {
+    return this.movieService.realAllMovies();
   }
 }
 

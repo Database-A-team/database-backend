@@ -4,6 +4,7 @@ import { Screen } from 'src/screens/entities/screen.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Raw, Repository } from 'typeorm';
 import { AllGenresOutput } from './dtos/all-genres.dto';
+import { AllMoviesOutput } from './dtos/all-movies.dto';
 import { CreateMovieInput, CreateMovieOutput } from './dtos/create-movie.dto';
 import {
   CreateReleasedMovieInput,
@@ -359,6 +360,31 @@ export class MovieService {
       return {
         ok: false,
         error: 'Could not get myMovie',
+      };
+    }
+  }
+
+  async realAllMovies(): Promise<AllMoviesOutput> {
+    try {
+      const movies = await this.movies.find({
+        order: {
+          isPromoted: 'DESC',
+        },
+      });
+      if (!movies) {
+        return {
+          ok: false,
+          error: 'There is no movie',
+        };
+      }
+      return {
+        ok: true,
+        movies,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not get all movies',
       };
     }
   }

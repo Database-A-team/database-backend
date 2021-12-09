@@ -17,11 +17,11 @@ import { SpecialScreen } from './specialScreen.entity';
 @InputType('TimeTableInputType', { isAbstract: true })
 @ObjectType()
 export class TimeTable {
-  @Field((type) => Date)
-  startTime: Date;
+  @Field((type) => String)
+  startTime: string;
 
-  @Field((type) => Date)
-  endTime: Date;
+  @Field((type) => String)
+  endTime: string;
 }
 
 @InputType('ScreenInputType', { isAbstract: true })
@@ -44,11 +44,11 @@ export class Screen {
   @Field(() => SpecialScreen, { nullable: true })
   specialScreen: SpecialScreen;
 
-  @OneToMany(() => SeatRow, (seatRows) => seatRows.screen, {cascade: true})
+  @OneToMany(() => SeatRow, (seatRows) => seatRows.screen, { cascade: true })
   @Field(() => [SeatRow])
   seatRows: SeatRow[];
 
-  @Column("int", {array: true, default: []})
+  @Column('int', { array: true, default: [] })
   @Field(() => [Int])
   stairs: number[];
 

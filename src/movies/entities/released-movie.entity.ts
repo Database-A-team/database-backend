@@ -7,6 +7,7 @@ import {
   JoinTable,
   ManyToMany,
   OneToOne,
+  RelationId,
 } from 'typeorm';
 import { Movie } from './movie.entity';
 import { Screen } from 'src/screens/entities/screen.entity';
@@ -15,9 +16,14 @@ import { Screen } from 'src/screens/entities/screen.entity';
 @ObjectType()
 @Entity()
 export class ReleasedMovie extends CoreEntity {
-  @OneToOne((type) => Movie, { onDelete: 'CASCADE' })
+  @Field((type) => Movie, { nullable: true })
+  @OneToOne((type) => Movie, {
+    onDelete: 'CASCADE',
+    nullable: true,
+    eager: true,
+  })
   @JoinColumn()
-  movie: Movie;
+  movie?: Movie;
 
   @Field((type) => [Screen], { nullable: true })
   @ManyToMany((type) => Screen, (screen) => screen.releasedMovies, {

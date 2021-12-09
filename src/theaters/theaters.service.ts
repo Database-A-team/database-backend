@@ -62,7 +62,9 @@ export class TheatersService {
   }
 
   async findAll(): Promise<Array<Theater>> {
-    return await this.theaterRepository.find({ relations: ['area', 'facilities'] });
+    return await this.theaterRepository.find({
+      relations: ['area', 'facilities'],
+    });
   }
 
   async updateTheater(
@@ -76,17 +78,25 @@ export class TheatersService {
     Object.assign(theater, updateTheaterInput);
 
     if (updateTheaterInput.areaId) {
-      const area = await getRepository(Area).findOne({ id: updateTheaterInput.areaId});
-      if(!area) throw new NotFoundException(`Area ${updateTheaterInput.areaId} is not found`);
+      const area = await getRepository(Area).findOne({
+        id: updateTheaterInput.areaId,
+      });
+      if (!area)
+        throw new NotFoundException(
+          `Area ${updateTheaterInput.areaId} is not found`,
+        );
 
       theater.area = area;
     }
 
     theater.facilities = [];
-    if(theater.facilities) {
-      for(const facilityId of updateTheaterInput.facilityIds) {
-        const facility = await getRepository(Facility).findOne({id: facilityId});
-        if(!facility) throw new NotFoundException(`Facility ${facilityId} is not found`);
+    if (theater.facilities) {
+      for (const facilityId of updateTheaterInput.facilityIds) {
+        const facility = await getRepository(Facility).findOne({
+          id: facilityId,
+        });
+        if (!facility)
+          throw new NotFoundException(`Facility ${facilityId} is not found`);
 
         theater.facilities.push(facility);
       }
