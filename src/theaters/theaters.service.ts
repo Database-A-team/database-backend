@@ -82,8 +82,8 @@ export class TheatersService {
       theater.area = area;
     }
 
-    theater.facilities = [];
     if(theater.facilities) {
+      theater.facilities = [];
       for(const facilityId of updateTheaterInput.facilityIds) {
         const facility = await getRepository(Facility).findOne({id: facilityId});
         if(!facility) throw new NotFoundException(`Facility ${facilityId} is not found`);
@@ -91,9 +91,9 @@ export class TheatersService {
         theater.facilities.push(facility);
       }
     }
-
-    theater.screens = [];
+    
     if (updateTheaterInput.screenIds) {
+      theater.screens = [];
       for (const screenId of updateTheaterInput.screenIds) {
         const screen = await getRepository(Screen).findOne({ id: screenId });
         if (!screen)

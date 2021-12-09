@@ -182,8 +182,9 @@ export class SeatsService {
       throw new NotFoundException(`SeatType id ${id} is not found`);
 
     Object.assign(seatType, updateSeatTypeInput);
-    seatType.seats = [];
+    
     if (updateSeatTypeInput.seatIds) {
+      seatType.seats = [];
       for (const seatId of updateSeatTypeInput.seatIds) {
         const seat = await this.seatRepository.findOne({ id: seatId });
         if (!seat)

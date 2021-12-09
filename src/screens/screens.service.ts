@@ -59,9 +59,9 @@ export class ScreensService {
   ): Promise<SpecialScreen> {
     let specialScreen = new SpecialScreen();
     specialScreen.name = createSpecialScreenInput.name;
-    specialScreen.screens = [];
 
     if (createSpecialScreenInput.screenIds) {
+      specialScreen.screens = [];
       for (const screenId of createSpecialScreenInput.screenIds) {
         const screen = await this.screenRepository.findOne({ id: screenId });
         if (!screen)
@@ -185,8 +185,8 @@ export class ScreensService {
       throw new NotFoundException(`SpecialScreen id : ${id} is not found`);
 
     Object.assign(specialScreen, updateSpecialScreenInput);
-    specialScreen.screens = [];
     if (updateSpecialScreenInput.screenIds) {
+      specialScreen.screens = [];
       for (const screenId of updateSpecialScreenInput.screenIds) {
         const screen = await this.screenRepository.findOne({ id: screenId });
         if (!screen)
