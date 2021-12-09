@@ -36,7 +36,7 @@ export class Screen {
   @Field(() => String)
   name: string;
 
-  @ManyToOne(() => Theater, (theater) => theater.screens, { eager: true })
+  @ManyToOne(() => Theater, (theater) => theater.screens, { eager: true, onDelete: 'CASCADE' })
   @Field(() => Theater, { nullable: true })
   theater: Theater;
 

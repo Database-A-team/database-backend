@@ -37,7 +37,7 @@ export class Theater {
   @Field(() => [Facility], {nullable: true})
   facilities: Facility[];
 
-  @OneToMany(() => Screen, (screen) => screen.theater)
-  @Field(() => [Screen], {nullable: true})
+  @OneToMany(() => Screen, (screen) => screen.theater, {cascade: true})
+  @Field(() => [Screen], {nullable: true,})
   screens: Screen[];
 }
