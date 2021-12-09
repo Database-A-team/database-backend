@@ -9,4 +9,7 @@ export class CreateSeatInput extends PickType(
 ) {
   @Field(() => Int, { nullable: true })
   seatTypeId: number;
+
+  @Field(() => Int, { nullable: true })
+  seatRowId: number;
 }

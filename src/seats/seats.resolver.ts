@@ -2,7 +2,9 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateSeatInput } from './dtos/create-seat.input';
 import { CreateSeatRowInput } from './dtos/create-seatRow.input';
 import { CreateSeatTypeInput } from './dtos/create-seatType.input';
+import { DeleteSeatRowInput } from './dtos/delete-seatRow.input';
 import { UpdateSeatInput } from './dtos/update-seat.input';
+import { UpdateSeatRowInput } from './dtos/update-seatRow.input';
 import { UpdateSeatTypeInput } from './dtos/update-seatType.input';
 import { Seat } from './entities/seat.entity';
 import { SeatRow } from './entities/seatRow.entity';
@@ -69,7 +71,7 @@ export class SeatsResolver {
 
   @Mutation(() => SeatRow)
   updateSeatRow(
-    @Args('updateSeatRowInput') updateSeatRowInput: UpdateSeatTypeInput,
+    @Args('updateSeatRowInput') updateSeatRowInput: UpdateSeatRowInput,
   ) {
     return this.seatsService.updateSeatRow(
       updateSeatRowInput.id,
@@ -88,7 +90,7 @@ export class SeatsResolver {
   }
 
   @Mutation(() => Boolean)
-  deleteSeatRow(@Args('id') id: number) {
-    return this.seatsService.deleteSeatRow(id);
+  deleteSeatRow(@Args('deleteSeatRowInput') deleteSeatRowInput: DeleteSeatRowInput) {
+    return this.seatsService.deleteSeatRow(deleteSeatRowInput);
   }
 }

@@ -5,6 +5,7 @@ import { getRepository, Repository } from 'typeorm';
 import { CreateSeatInput } from './dtos/create-seat.input';
 import { CreateSeatRowInput } from './dtos/create-seatRow.input';
 import { CreateSeatTypeInput } from './dtos/create-seatType.input';
+import { DeleteSeatRowInput } from './dtos/delete-seatRow.input';
 import { UpdateSeatInput } from './dtos/update-seat.input';
 import { UpdateSeatRowInput } from './dtos/update-seatRow.input';
 import { UpdateSeatTypeInput } from './dtos/update-seatType.input';
@@ -59,6 +60,15 @@ export class SeatsService {
       seat.seatType = seatType;
     }
 
+    if (createSeatInput.seatRowId) {
+      const seatRow = await this.seatRowRepository.findOne({
+        id: createSeatInput.seatRowId,
+      });
+      if (!seatRow) throw new NotFoundException(`SeatRow id ${createSeatInput.seatRowId} is not found`);
+
+      seat.seatRow = seatRow;
+    }
+    
     return this.seatRepository.save(seat);
   }
 
@@ -90,6 +100,18 @@ export class SeatsService {
       seatRow.screen = screen;
     }
 
+    if (createSeatRowInput.updateSeatRowIds) {
+      for(const seatRowId of createSeatRowInput.updateSeatRowIds){
+        const seatRow = await this.seatRowRepository.findOne({
+          id: seatRowId,
+        });
+        if (!seatRow) throw new NotFoundException(`SeatRow id ${seatRowId} is not found`);
+        seatRow.rowName = String.fromCharCode(seatRow.rowName.charCodeAt(0) + 1);
+
+        await this.seatRowRepository.save(seatRow);
+      }
+    }
+
     return await this.seatRowRepository.save(seatRow);
   }
 
@@ -105,7 +127,7 @@ export class SeatsService {
 
   async findAllSeatRow(): Promise<Array<SeatRow>> {
     return await this.seatRowRepository.find({
-      relations: ['screen', 'seats'],
+      relations: ['screen', 'seats', 'screen.theater', 'seats.seatType'],
     });
   }
 
@@ -184,13 +206,20 @@ export class SeatsService {
     Object.assign(seat, updateSeatInput);
 
     if (updateSeatInput.seatTypeId) {
-      let seatType = await this.seatTypeRepository.findOne({ id: id });
+      let seatType = await this.seatTypeRepository.findOne({ id: updateSeatInput.seatTypeId });
       if (!seatType)
         throw new NotFoundException(
           `SeatType id ${updateSeatInput.seatTypeId} is not found`,
         );
 
       seat.seatType = seatType;
+    }
+
+    if (updateSeatInput.seatRowId) {
+      let seatRow = await this.seatRowRepository.findOne({ id: updateSeatInput.seatRowId });
+      if (!seatRow) throw new NotFoundException(`SeatRow id ${updateSeatInput.seatRowId}`);
+
+      seat.seatRow = seatRow;
     }
 
     return await this.seatRepository.save(seat);
@@ -215,17 +244,16 @@ export class SeatsService {
     }
 
     if (updateSeatRowInput.seatIds) {
-      if (seatRow.seats === undefined) seatRow.seats = [];
+      seatRow.seats = [];
       for (const seatId of updateSeatRowInput.seatIds) {
-        let seat = await this.seatRepository.findOne({ id: id });
+        let seat = await this.seatRepository.findOne({ id: seatId });
         if (!seat)
           throw new NotFoundException(`Seat id ${seatId} is not found`);
-
         seatRow.seats.push(seat);
       }
     }
 
-    return this.seatRepository.save(seatRow);
+    return this.seatRowRepository.save(seatRow);
   }
 
   async deleteSeatType(id: number): Promise<boolean> {
@@ -245,9 +273,21 @@ export class SeatsService {
     return true;
   }
 
-  async deleteSeatRow(id: number): Promise<boolean> {
+  async deleteSeatRow({ id, updateSeatRowIds }: DeleteSeatRowInput): Promise<boolean> {
     const seatRow = await this.seatRowRepository.findOne({ id: id });
     if (!seatRow) throw new NotFoundException(`SeatRow id ${id} is not found`);
+
+    if (updateSeatRowIds) {
+      for(const seatRowId of updateSeatRowIds){
+        const seatRow = await this.seatRowRepository.findOne({
+          id: seatRowId,
+        });
+        if (!seatRow) throw new NotFoundException(`SeatRow id ${seatRowId} is not found`);
+        seatRow.rowName = String.fromCharCode(seatRow.rowName.charCodeAt(0) - 1);
+
+        await this.seatRowRepository.save(seatRow);
+      }
+    }
 
     await this.seatRowRepository.remove(seatRow);
     return true;

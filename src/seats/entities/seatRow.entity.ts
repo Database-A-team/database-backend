@@ -9,7 +9,11 @@ import {
 } from 'typeorm';
 import { Seat } from './seat.entity';
 
-@Entity()
+@Entity({
+  orderBy: {
+    rowName: 'ASC',
+  }
+})
 @ObjectType()
 @InputType('SeatRowInputType', { isAbstract: true })
 export class SeatRow {
@@ -21,7 +25,7 @@ export class SeatRow {
   @Field(() => String)
   rowName: string;
 
-  @OneToMany(() => Seat, (seats) => seats.seatRow, { nullable: true })
+  @OneToMany(() => Seat, (seats) => seats.seatRow, { nullable: true, cascade: true })
   @Field(() => [Seat])
   seats?: Seat[];
 

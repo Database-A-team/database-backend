@@ -76,10 +76,22 @@ export class ScreensService {
   }
 
   async findOneScreenById(id: number): Promise<Screen> {
-    const screen = await this.screenRepository.findOne(
-      { id: id },
-      { relations: ['theater', 'specialScreen'] },
-    );
+    // const screen = await this.screenRepository.findOne(
+    //   { id: id },
+    //   { relations: ['theater', 'specialScreen', 'seatRows', 'seatRows.seats', 'seatRows.seats.seatType'], },
+    // );
+
+    const screen = await this.screenRepository.createQueryBuilder('screen')
+    .leftJoinAndSelect('screen.theater', 'theater')
+    .leftJoinAndSelect('screen.specialScreen', 'specialScreen')
+    .leftJoinAndSelect('screen.seatRows', 'seatRows')
+    .leftJoinAndSelect('seatRows.seats', 'seats')
+    .leftJoinAndSelect('seats.seatType', 'seatType')
+    .where('screen.id = :id', {id: id})
+    .addOrderBy('seatRows.rowName', 'ASC')
+    .addOrderBy('seats.columnNumber', 'ASC')
+    .getOne();
+    
     if (!screen) throw new NotFoundException(`Screen id : ${id} is not found`);
 
     return screen;
@@ -134,6 +146,15 @@ export class ScreensService {
     if (!screen) throw new NotFoundException(`Screen id : ${id} is not found`);
 
     Object.assign(screen, updateScreenInput);
+    if (updateScreenInput.theaterId) {
+      const theater = await getRepository(Theater).findOne({
+        id: updateScreenInput.theaterId
+      });
+      if(!theater) throw new NotFoundException(`Theater id : ${updateScreenInput.theaterId} is ot found`);
+      
+      screen.theater = theater;
+    }
+
     if (!updateScreenInput.specialScreenId) screen.specialScreen = null;
     else {
       const specialScreen = await this.specialScreenRepository.findOne({

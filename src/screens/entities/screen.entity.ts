@@ -38,6 +38,10 @@ export class Screen {
   @Field(() => [SeatRow])
   seatRows: SeatRow[];
 
+  @Column("int", {array: true, default: []})
+  @Field(() => [Int])
+  stairs: number[];
+
   @ManyToMany(() => ReleasedMovie, (releasedMovie) => releasedMovie.screens)
   @Field(() => [ReleasedMovie])
   @JoinTable()

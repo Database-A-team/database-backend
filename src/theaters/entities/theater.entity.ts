@@ -34,10 +34,10 @@ export class Theater {
 
   @ManyToMany(() => Facility)
   @JoinTable()
-  @Field(() => [Facility])
+  @Field(() => [Facility], {nullable: true})
   facilities: Facility[];
 
   @OneToMany(() => Screen, (screen) => screen.theater)
-  @Field(() => [Screen])
+  @Field(() => [Screen], {nullable: true})
   screens: Screen[];
 }

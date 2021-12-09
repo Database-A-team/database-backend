@@ -13,7 +13,11 @@ import { SeatRow } from './seatRow.entity';
 import { SeatType } from './seatType.entity';
 
 @InputType('SeatInputType', { isAbstract: true })
-@Entity()
+@Entity({
+  orderBy: {
+    columnNumber: 'ASC',
+  }
+})
 @ObjectType()
 export class Seat {
   @PrimaryGeneratedColumn('increment')
@@ -25,11 +29,11 @@ export class Seat {
   columnNumber: number;
 
   @ManyToOne(() => SeatType, (seatType) => seatType.seats)
-  @Field(() => SeatType)
+  @Field(() => SeatType, {nullable: true})
   seatType: SeatType;
 
-  @ManyToOne(() => SeatRow, (seatRow) => seatRow.seats)
-  @Field(() => SeatRow)
+  @ManyToOne(() => SeatRow, (seatRow) => seatRow.seats, { onDelete: 'CASCADE' })
+  @Field(() => SeatRow, {nullable: true})
   seatRow: SeatRow;
 
   @ManyToMany(

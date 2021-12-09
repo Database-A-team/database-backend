@@ -9,7 +9,7 @@ export class Facility {
   @Field(() => Int)
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   @Field(() => String)
   name: string;
 
