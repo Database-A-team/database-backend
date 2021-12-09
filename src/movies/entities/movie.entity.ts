@@ -67,7 +67,9 @@ export class Movie extends CoreEntity {
   duration: string;
 
   @Field((type) => ReleasedMovie)
-  @OneToOne((type) => ReleasedMovie, (releasedMovie) => releasedMovie.movie)
+  @OneToOne((type) => ReleasedMovie, (releasedMovie) => releasedMovie.movie, {
+    nullable: true,
+  })
   released: ReleasedMovie;
 
   @Field((type) => Boolean)
