@@ -29,7 +29,7 @@ export class SeatRow {
   @Field(() => [Seat])
   seats?: Seat[];
 
-  @ManyToOne(() => Screen, (screen) => screen.seatRows)
+  @ManyToOne(() => Screen, (screen) => screen.seatRows, { onDelete: "CASCADE" })
   @Field(() => Screen)
   screen: Screen;
 }

@@ -12,6 +12,6 @@ export class CreateScreenInput {
   @Field(() => Int, { nullable: true })
   specialScreenId: number;
 
-  @Field(() => [TimeTable])
+  @Field(() => [TimeTable], { nullable: true })
   timeTables: TimeTable[];
 }

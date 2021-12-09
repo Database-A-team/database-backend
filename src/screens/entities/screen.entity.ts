@@ -44,7 +44,7 @@ export class Screen {
   @Field(() => SpecialScreen, { nullable: true })
   specialScreen: SpecialScreen;
 
-  @OneToMany(() => SeatRow, (seatRows) => seatRows.screen)
+  @OneToMany(() => SeatRow, (seatRows) => seatRows.screen, {cascade: true})
   @Field(() => [SeatRow])
   seatRows: SeatRow[];
 
@@ -64,6 +64,6 @@ export class Screen {
   reservations?: Reservation[];
 
   @Field((type) => [TimeTable], { nullable: true })
-  @Column({ type: 'json' })
+  @Column({ type: 'json', nullable: true })
   timeTables?: TimeTable[];
 }
