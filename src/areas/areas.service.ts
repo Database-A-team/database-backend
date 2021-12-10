@@ -21,7 +21,7 @@ export class AreasService {
   }
 
   async findAll(): Promise<Array<Area>> {
-    return await this.areaRepository.find();
+    return await this.areaRepository.find({ relations: ['theaters'] });
   }
 
   async findOneById(id: number): Promise<Area> {

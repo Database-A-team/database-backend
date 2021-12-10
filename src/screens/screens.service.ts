@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ReleasedMovie } from 'src/movies/entities/released-movie.entity';
 import { Theater } from 'src/theaters/entities/theater.entity';
 import { getRepository, Raw, Repository } from 'typeorm';
 import { CreateScreenInput } from './dtos/create-screen.input';
@@ -76,7 +77,7 @@ export class ScreensService {
 
   async findAllScreen(): Promise<Array<Screen>> {
     return await this.screenRepository.find({
-      relations: ['theater', 'specialScreen'],
+      relations: ['theater', 'specialScreen', 'releasedMovies'],
     });
   }
 
@@ -86,17 +87,18 @@ export class ScreensService {
     //   { relations: ['theater', 'specialScreen', 'seatRows', 'seatRows.seats', 'seatRows.seats.seatType'], },
     // );
 
-    const screen = await this.screenRepository.createQueryBuilder('screen')
-    .leftJoinAndSelect('screen.theater', 'theater')
-    .leftJoinAndSelect('screen.specialScreen', 'specialScreen')
-    .leftJoinAndSelect('screen.seatRows', 'seatRows')
-    .leftJoinAndSelect('seatRows.seats', 'seats')
-    .leftJoinAndSelect('seats.seatType', 'seatType')
-    .where('screen.id = :id', {id: id})
-    .addOrderBy('seatRows.rowName', 'ASC')
-    .addOrderBy('seats.columnNumber', 'ASC')
-    .getOne();
-    
+    const screen = await this.screenRepository
+      .createQueryBuilder('screen')
+      .leftJoinAndSelect('screen.theater', 'theater')
+      .leftJoinAndSelect('screen.specialScreen', 'specialScreen')
+      .leftJoinAndSelect('screen.seatRows', 'seatRows')
+      .leftJoinAndSelect('seatRows.seats', 'seats')
+      .leftJoinAndSelect('seats.seatType', 'seatType')
+      .where('screen.id = :id', { id: id })
+      .addOrderBy('seatRows.rowName', 'ASC')
+      .addOrderBy('seats.columnNumber', 'ASC')
+      .getOne();
+
     if (!screen) throw new NotFoundException(`Screen id : ${id} is not found`);
 
     return screen;
@@ -153,10 +155,13 @@ export class ScreensService {
     Object.assign(screen, updateScreenInput);
     if (updateScreenInput.theaterId) {
       const theater = await getRepository(Theater).findOne({
-        id: updateScreenInput.theaterId
+        id: updateScreenInput.theaterId,
       });
-      if(!theater) throw new NotFoundException(`Theater id : ${updateScreenInput.theaterId} is ot found`);
-      
+      if (!theater)
+        throw new NotFoundException(
+          `Theater id : ${updateScreenInput.theaterId} is ot found`,
+        );
+
       screen.theater = theater;
     }
 
@@ -171,6 +176,18 @@ export class ScreensService {
         );
 
       screen.specialScreen = specialScreen;
+    }
+
+    if(updateScreenInput.releasedMovieIds) {
+      screen.releasedMovies = [];
+      for(const releasedMovieId of updateScreenInput.releasedMovieIds) {
+        const releasedMovie = await getRepository(ReleasedMovie).findOne({
+          id: releasedMovieId
+        });
+        if(!releasedMovie) throw new NotFoundException(`ReleasedMovie id : ${releasedMovieId} is not found`);
+
+        screen.releasedMovies.push(releasedMovie);
+      }
     }
 
     return await this.screenRepository.save(screen);

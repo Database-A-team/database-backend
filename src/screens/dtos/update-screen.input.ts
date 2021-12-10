@@ -5,4 +5,7 @@ import { CreateScreenInput } from './create-screen.input';
 export class UpdateScreenInput extends PartialType(CreateScreenInput) {
   @Field(() => Int)
   id: number;
+
+  @Field(() => [Int], {nullable: true})
+  releasedMovieIds: number[];
 }
