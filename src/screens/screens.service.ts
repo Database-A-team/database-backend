@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ReleasedMovie } from 'src/movies/entities/released-movie.entity';
 import { Theater } from 'src/theaters/entities/theater.entity';
 import { getRepository, Raw, Repository } from 'typeorm';
 import { CreateScreenInput } from './dtos/create-screen.input';
@@ -175,6 +176,18 @@ export class ScreensService {
         );
 
       screen.specialScreen = specialScreen;
+    }
+
+    if(updateScreenInput.releasedMovieIds) {
+      screen.releasedMovies = [];
+      for(const releasedMovieId of updateScreenInput.releasedMovieIds) {
+        const releasedMovie = await getRepository(ReleasedMovie).findOne({
+          id: releasedMovieId
+        });
+        if(!releasedMovie) throw new NotFoundException(`ReleasedMovie id : ${releasedMovieId} is not found`);
+
+        screen.releasedMovies.push(releasedMovie);
+      }
     }
 
     return await this.screenRepository.save(screen);

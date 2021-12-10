@@ -34,7 +34,7 @@ export class Theater {
 
   @ManyToMany(() => Facility)
   @JoinTable()
-  @Field(() => [Facility], {nullable: true})
+  @Field(() => [Facility], {defaultValue: []})
   facilities: Facility[];
 
   @OneToMany(() => Screen, (screen) => screen.theater)
